@@ -1,0 +1,445 @@
+\documentclass[Spanish,12pt,doublespace,german,letterpaper,dvipdfm]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{latexsym}
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage{amsbsy}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\DeclareGraphicsExtensions{.jpg} {
+\renewcommand{\baselinestretch}{1.5}  %Espaciamiento de lineas
+\frenchspacing %control de espacios
+
+% Título Portada
+\centerline{\Large UNIVERSIDAD MAYOR DE SAN ANDRÉS}
+\centerline{FACULTAD DE CIENCIAS PURAS Y NATURALES}
+\centerline{POSTGRADO AUTOFINANCIADO
+EN MATEMÁTICA} 
+\centerline{Módulo II: Matrices} 
+\vspace{12em}
+\centerline{\huge RAUIZ DE  MATRICES  MEDIANTE }\vspace{1em}
+\centerline{\huge SCHUR APLICADO A VISION ARTIFICAL}\vspace{1em}
+ \centerline{\huge  REJILLAS DE FRECUENCIA}\vspace{1em}
+ \centerline{\huge (EN T.F. FOURIER ) }
+\vspace{10em} \centerline{\Large EDGAR DANIEL TÁRRAGA
+TORREZ}\vspace{4em}
+ \centerline{\Large Tarija, julio 2023}\vspace{5em}
+
+ \pagebreak
+
+ \begin{document}
+ \tableofcontents
+ \pagenumbering{arabic}
+%\listoftables
+%\listoffigures
+% quitar los `%' de la siguiente secci'on si quieres
+% incluir un resumen de tu tesis.
+
+
+\include{intro}
+
+En el  procesamiento de imagenes la importancia de la Transformada de Fourier  se desarrollo con  métodos numéricos que permiten su uso en contexto computacional. 
+La TF discreta permite encontrar una función espectral discreta (es decir, para una secuencia finita de N frecuencias) a partir de una señal discreta de N valores:
+
+
+La misma formulación de la transformada discreta se aplica a señales 2D (imágenes), aprovechando otra propiedad fundamental de la TF, denominada separabilidad (la TF de una función 2D que puede ponerse como producto de dos funciones 1D, es el producto de cada una de las TF de dichas funciones).
+De esa forma surge la TF discreta para funciones 2D f(nx, ny), donde Fh y Fv representan frecuencias horizontales y verticales, respectivamente (en este caso se trata de frecuencias geométricas):
+
+ 
+
+Una forma de representar la TF de una imagen es con otra imagen de igual resolución. 
+En si Fh y Fv representa una matriz nueva del espectro de frecuencias el cual se  utiliza  alguna forma de pseudocolor para representar la energía a cada una de las frecuencias el cual estas nos dan los paramteros de ruidos,nitidez,etc sobre la imagen.
+Dicho esto el tratamiento de esta repesentacion grafica de forurier  tiene un campo grande donde existen numerosas propuestas aplicadas para mejorar imagenes. 
+
+\subsection{Planteamiento del problema}
+La TF de las imagenes con una interferencia aditiva se puede observae algunos  puntos simétricos donde esa interferencia está localizada en el espectro. 
+Si editamos el espectro y eliminamos la energía a esas frecuencias se puede restaurar la imagen original.
+En resumen una de las técnicas iníciales es hacer la captura de la imagen de la T.F. y determinar un aplicativo  manual que elimine los puntos blancos concentrados de energia y esto dara un efecto, modificatorio a  la TF y se realizia  la transformada inversa con el espectro manipulado( Imagen corregida ), y se logra corregir casi por completo el defecto en la imagen original.
+
+\subsection{Justificaci\'on}
+Mediante aplicativos de Python se pretende   encontrar  la matriz de modulo y angulo de la descomposion de Fourier en 2D , el cual con estas matrices se buscara en filas y columnas los puntos altos de concentracion de frecuencias y asi recuadrar rejillas 2x2 para sus tratamiento  
+El tratamiento que se pretende usar las tecnicas de descomposiion de matrices  mediante schur (factorizacion)  estudiadas en el modulo II de matrices y asi mismo calcular la raiz matricial de esta rejilla y reemplazar en la matriz principal, este proceso de tratamiento de rejillas de 2x2 se hara con dos iteracciones.
+\subsection{Objetivo General.}
+El presente proyecto  tiene por objetivo desarrollar un aplicativo/formulacion  en python para hallar la raiz cuadrada  de una matrizy mediante schur ,asi mismo este tratamiento de raiz cuadrada se aplicara  a rejillas 2x2 en puntos maximos de la mtariz principal de frecuencias  el cual reemplazara en las rejillas/matrices 2x2, y con  este proceso de tratamiento de rejillas/matrices de 2x2 llegar a  dos iteracciones. para ver su mejoramiento
+
+\subsection{Objetivos Especificos.}
+Entre los objetivos especificos que se pretende alcanzar son:
+\begin{itemize}
+  \item Desarrollo de ecuaciones para calcular autovalores y autovectores en python para matrices 2x2 
+  \item Desarrollo de ecuaciones para la descomposion de Grand Schmit.
+  \item Desarrollo de de ecuaciones   para el calculo de raiz cuadra mediante schur
+  \item Desarrollo de aplicativos de jupiter notebook para codificacion en  python de las ecuaciones a usar en este proyecto
+  \item Desarrollo de aplicativos en python para visualizar el espectro de Foruier.
+ \end{itemize}
+ 
+\section{Fundamentos Teoricos}
+\subsection{Polinomio caracteristiv}
+Sea f : V → V una aplicaci ́on lineal con matriz asociada A en una cierta base.
+
+
+Se sabe que 
+$$f(x) = Ax$$ 
+Si x es un autovector asociado a un autovalor λ, entonces
+$$f(x) = λx ⇒ Ax = λx ⇒ (A − λI)x = 0$$
+Denotando por $A = (a_{ij})$ y $x = (x_1,...,x_n)$, podemos escribir estas ecuaciones expl ́ıcitamente como
+\begin{equation}
+\begin{matrix}
+ (a_{11}-\lambda)x_1    & + & a_{12}x_2          & +\cdots & a_{1n}x_n       & =  & 0\\
+  a_{21}x_1             & + & (a_{22}-\lambda)x_2  & +\cdots & a_{2n}x_n       & =  & 0\\
+ \vdots & \vdots        &        & \vdots & \vdots \\
+  a_{n1}x_1             & + & a_{n2}x_2   & \cdots & (a_{nn}-\lambda)x_n &  =  & 0
+\end{matrix}
+\end{equation}
+Obteniendo un sistema homog ́eneo que debe satisfacer cada uno de los auto- vectores asociados al autovalor λ.
+
+As ́ı pues, para que existan autovectores, este sistema debe tener solucio ́n distinta de la trivial, o equivalentemente, la matriz del sistema debe tener rango menor que n. 
+Esto es,
+
+\begin{equation}
+\begin{vmatrix}
+  a_{11}-\lambda    & + & a_{12}          & +\cdots & a_{1n}       \\
+  a_{21}            & + & a_{22}-\lambda  & +\cdots & a_{2n}       \\
+ \vdots & \vdots        &        & \vdots & \vdots \\
+  a_{n1}             & + & a_{n2}x_2   & \cdots & a_{nn}-\lambda 
+\end{vmatrix}
+\end{equation}
+
+$$|A -\lambda I_n|=0$$
+\subsection{El sistema de control de procesos en temperatura}
+Considerándose un horno el\'ectrico ( mufla de laboratorio ) en el
+cual la temperatura interna del proceso se calienta mediante
+hornillas  internas como se muestra en la figura ,la cual dichas
+hornillas son alimentadas por una
+fuente de energia .\\
+
+\begin{figure}[h!]
+\begin{center}
+ \includegraphics[width=10cm]{plani1_1.jpg}
+\end{center}
+\caption{ Horno Electrico }
+\end{figure}
+
+El propósito de la unidad es calentar el fluido(aire) del medio
+que se procesa, de una temperatura de entrada $T_i(t)$, a cierta
+temperatura $T(t)$ que se desea.\\
+Como se dijo anteriormente el medio de calentamiento son las
+hornillas el\'ectricas y la energía que gana el fluido el proceso
+es igual al calor que libera las hornillas, siempre y cuando no
+haya perdidas de calor en el entorno es decir el aislamiento
+perfecto que
+existe dentro del horno.\\
+En este proceso existen muchas variables que pueden cambiar , lo
+cual ocasiona que la temperatura de salida se desvié del valor
+deseado ,si esto llega a suceder se deben de emprender algunas
+acciones inmediatas para corregir la desviaci\'on ,esto es el
+objetivo de controlar la temperatura de salida del proceso  para
+mantener el
+valor deseado.\\
+Una manera de lograr este objetivo es primero medir la temperatura
+$T(t)$, después comparar este con el valor que se desea  y con la
+base en la  comparaci\'on decidir que se debe hacer para corregir
+cualquier desviación .\\
+Se puede usar el flujo del aire interno del horno para corregir la
+desviación , es decir  si la temperatura esta por arriba del valor
+deseado entonces se puede abrir el interruptor  para cortar el
+flujo de energía de las hornillas .Si la temperatura esta por
+debajo del valor que se desea se puede cerrar el interruptor para
+aumentar el flujo de calor interno.Todo esto lo puede hacer
+manualmente el operador el proceso.\\
+Sin embargo la operación manual no dará una regulación perfecta
+por ello seria preferible  realizar el control de manera
+automática , es decir contar con instrumentos que controlen la
+variables sin necesidad que intervenga el operador.\\Esto es lo
+que
+significa el control automático de procesos.\\
+
+\subparagraph{Sistema de control propuesto} Para lograr el
+objetivo de procesos automáticos se debe dise~nar
+e implementar un sistema de control .\\
+En la figura  se muestra el sistema de control propuesto y sus
+componentes básicos.\\
+El primer paso es medir la temperatura interna del horno
+eléctrico, esto se hace mediante un sun sensor (PT100
+,dispositivo de resistencia ).\\
+El sensor se conecta físicamente al transductor, el cual capta  la
+salida del sensor y la convierte en un se~nal lo suficiente
+compatible para transmitir al controlador.\\
+El controlador recibe la se~nal que esta en relación con la
+temperatura , la compara con el valor que se desea y seg\'un el
+valor de comparac\'ion , decide que hacer para mantener la
+temperatura en el valor deseado .\\
+Con base en la decision, el controlador envía otra se~nal al
+elemento final de control (interruptor electrónico),el cual a su
+vez maneja el flujo de energía del horno eléctrico.\\
+
+\begin{figure}[h!]
+\begin{center}
+ \includegraphics[width=12cm]{plani1_3.jpg}
+\end{center}
+\caption{Sistema de control Horno Eléctrico }
+\end{figure}
+
+Los componentes b\'asicos del sistema de control descrito seria:
+\begin{itemize}
+  \item Sensor , que también se conoce como elemento primario
+  \item Controlador, que es el cerebro del sistema de control
+  \item Elemento final de control o actuador principal.
+\end{itemize}
+La importancia de estos componentes esta en que realizan las tres
+operaciones básicas que deben estar presentes en todo sistema de
+control , esta operaciones son:
+\begin{description}
+  \item[Medici\'on]  de la variable que se controla ,
+  generalmente se la hace mediante la combinaci\'on de sensor y
+  transmisor
+  \item[Decisi\'on] con base a la medici\'on , el controlador
+  decide que hacer para mantener la variable en el valor que se
+  desea.
+  \item[Acci\'on] como resultado de la decisi\'on del controlador
+  se debe efectuar una regulaci\'on del elemento final.
+\end{description}
+
+
+\subsubsection{Control por realimentaci\'on} El concepto de control
+por realimentación a pese de existir hace mas de mil a~nos no tuvo
+aplicaci\'on practica en la industria hasta James Watt lo aplico
+en el control de velocidad de su maquina de vapor,actualmente la
+gran mayoría de los sistemas de control automático se incluye al
+menos un circuito de control por retroalimentación.
+
+\paragraph{Descripción del control por realimentaci\'on en el horno
+eléctrico} El concepto de  control por realimentación en procesos
+automáticos es como se describe a continuaci\'on :\\
+El objetivo es mantener la temperatura del fluido (aire) que se
+procesa $T_o(t)$ en valor  deseado o punto de control , en
+presencia de variaciones en el flujo del fluido que se procesa ,
+del cual la variación que presenta este proceso es la temperatura
+de entrada o temperatura ambiente que infringe al sistema cuando
+la puerta de alimentación del horno es aperturada.\\
+
+
+\subsection{Medici\'on de temperatura}
+La medida de temperatura consiste en una de las mediciones mas
+comunes y mas importantes que se efectúan en los procesos
+industriales.\\
+Lresa a
+una temperatura especificada la variación de resistencia en
+ohmios del conductor por cada grado que cambia su temperatura.\\
+La relación entre esos factores puede verse en la expresión lineal
+siguiente.
+\begin{equation*}
+  R_t=R_O*(1+\alpha*t)
+\end{equation*}
+en la que:
+\begin{description}
+  \item[$R_O$] resistencia en ohmios a $0^{o}$C
+  \item[$R_t$] resistencia en ohmios a $t^{o}$C
+  \item[$\alpha$] coeficiente de temperatura de la resistencia
+  cuyo valor entre $0^{o}$C y $100^{o}$C es de 0.003850 $\Omega$
+  en la escala pr\'actica de temperaturas internacional (IPTS-68)
+\end{description}
+Si la relación resistencia -temperatura no es lineal la ecuación
+general pasa a:
+\begin{equation*}
+  R_t=R_O*(1+A*t+B*t^{2})
+\end{equation*}
+ecuacion valida desde $0^{o}$C a $850^{o}$C.\\
+
+
+\paragraph{Ventajas del PT100} Por otra parte los PT100 siendo levemente
+mas costoso y mecánicamente no tan rígidos como las termocuplas
+,las superan especialmente en aplicaciones de bajas temperaturas
+(-100 a
+$200^{o}$C ).\\
+Los PT100 pueden fácilmente entregar precisiones de una décima de
+grado con la ventaja que la PT100 no se descompone gradualmente
+entregando lecturas erróneas , si no que normalmente se abre con
+lo cual el dispositivo medidor detecta inmediatamente la falla de
+sensor y da aviso.\\
+Ademas las sondas PT100 pueden ser colocadas a cierta distancia
+del punto de medici\'on sin mayor problema  ( hasta unos 30 metros
+) utilizando cable de cobre convencional para hacer la extension.
+
+
+\subsubsection{Circuitos de conexión del PT 100} Según el fabricante Arian
+existen 3 modos de conexión para las Pt100, cada uno de ellos
+requiere una adecuada configuraci\'on electr\'onica.
+
+\paragraph{Conexión dos hilos}
+Es el modo mas sencillo de conexi\'on (pero menos recomendado) es
+con solo dos cables.\\En este caso las resistencias de los cables
+$R_{c1}$ , $R_{c2}$ que unen el PT100 al instrumento de medici\'on
+se suman generando un
+error inevitable.\\
+El lector medirá el total de $R(t)$+$R_{c1}$+$R_{c2}$ en vez de
+$R(t)$
+
+\paragraph{Conexión tres hilos} El modo de conexión de 3
+hilos es el mas común y resuelve bastante bien el problema de
+error generado por los cables.\\
+El único requisito para esta conexi\'on es de que los tres cables
+denominados cafe, azul ,verde tengan la misma resistencia
+eléctrica pues el sistema de medici\'on se basa ( casi siempre )
+en el puente de Wheatstone.
+\paragraph{Conexión cuatro hilos}
+El método de 4 hilos es el mas preciso de todos, los 4 cables
+pueden ser distintos (distinta resistencia) pero el circuito
+propuesto es mas costoso.
+\begin{figure}[h!]
+\begin{center}
+ \includegraphics[width=10cm]{plani4.jpg}
+\end{center}
+\caption{Diagrama de conexión de cuatro hilos  ( Arian ) }
+\end{figure}
+Por los cables 1 y 4 se hace circular una corriente I conocida a
+través de R(t)-PT100 provocando una diferencia de potencial V en
+los extremos de R(t). Los cables 2 y 4 están conectados a la
+entrada de un circuito de alta impedancia luego por estos cables
+no circula corriente y por lo tanto la caída de potencial en los
+cables Rc2 y Rc3 son cero y así dando la medici\'on  de R(t) en
+voltios.
+
+\subsubsection{Autocalentamiento PT100} Cualquiera que sea el
+método de conexión , se debe hacer pasar un cierta corriente $I$
+por el elemento sensor modo que de poder medir su resistencia.\\
+E
+\subsection{Controladores de tensi\'on alterna }
+Un controlador de tension alterna es un convertidor que controla
+lma de onda de la fuente antes de
+alcanzar la carga.
+\subsubsection{Funcionamiento básico}
+En la figura siguiente se muestra un controlador de tension
+e denomina antiparalelo o paralelo
+inverso porque los SCR conducen corriente en sentidos opuestos. Un
+triac es un equivalente a dos SCR en antiparalelo.\\
+\begin{figure}[h!]
+\begin{center}
+ \includegraphics[width=10cm]{plani5.jpg}
+\end{center}
+\caption{a)Controlador de tension alterna  b)Formas de onda}
+\end{figure}
+Este circuito presenta algunas observaciones importantes que son:
+\begin{itemize}
+  \item Los SCR'S no pueden conducir simultáneamente
+  \item La tension de carga es la misma que la tension de la
+  fuente cuando esta activado cualquiera de los SCR .La tension de
+  carga es nula cuándo esta desactivados los SCR.
+  \item La tension del interruptor  $V_{SW}$ es nula cuando esta
+  activado cualquiera de los SCR y es igual a la tension del
+  generador cuando están desactivados los dos SCR.
+  \item La corriente media en la fuente y en la carga es nula si
+  se activan los dos SCR durante intervalos iguales de tiempo . La
+  corriente media en cada SCR no es nula , debido a la corrriente
+  unidireccional en los SCR.
+  \item La corriente eficaz en cada  SCR es $1/raiz(2)$
+  multiplicando por la corriente eficaz de carga si se activan los
+  SCR durante intervalos iguales de tiempo.
+\end{itemize}
+
+
+\subsubsection{Triacs}
+Este dispositivo tiene las siguientes características:
+\begin{itemize}
+  \item     La corriente y tensión eficaz de un Triac dependen del ángulo de conducción
+  \item     A mayor ángulo de conducción, se obtiene a la salida mayor potencia
+  \item      Los Triacs no son interruptores perfectos,
+   necesitan un tiempo para pasar de corte a conducción y viceversa.
+\end{itemize}
+
+\subsection{Desarrollo del sistema de control}
+El sistema propuesto se muestra en la figura donde el controlador
+digital estará
+basado en un PIC18F2550 que internamente tiene un ADC.\\
+$R_{(kt)}$ es la se~nal que nos da el valor de temperatura que se
+desea calentar en el horno,esta se~nal estará designada en un
+valor digital dentro del microcontrolador.\\
+
+\begin{figure}[h!]
+\begin{center}
+ \includegraphics[width=14cm]{plani7.jpg}
+\end{center}
+\caption{Sistema de control propuesto}
+\end{figure}
+
+Una vez evaluado el valor de correcci\'on $C_{(kt)}$ por el
+controlador digital enviara este valor por un bus digital al
+bloque denominado regulador de valor eficaz, el mismo que
+entregara la energía a la
+planta $G(s)$  denominada horno eléctrico.\\
+La respuesta de la planta sera sensado por un transductor de
+temperatura que este mandara la se~nal $T_{(t)}$ en forma
+analógica al PIC para su realimentaci\'on mediante el conversor
+análogo digital.
+
+
+\section{Desarrollo de ecuaciones}
+\subsection{Autovalores}
+Sea la Matriz A : 
+\begin{equation}
+A=
+\begin{pmatrix}
+  a_{11}    & a_{12} \\
+  a_{21}    & a_{22}       
+\end{pmatrix}
+\end{equation}
+Aplicando su polinomio caracteristico 
+$$|A -\lambda I_n|=0$$
+
+\begin{equation}
+\begin{vmatrix}
+  a_{11}-\lambda    & + & a_{12}           \\
+  a_{21}            & + & a_{22}-\lambda 
+\end{vmatrix}
+\end{equation}
+Desarrollando
+
+\begin{eqnarray}
+  (a_{11}-\lambda)*(a_{22}-\lambda) - a_{12}*a_{21}=0   \\
+  (a_{11})*(a_{22}-\lambda)-\lambda*(a_{22}-\lambda) - a_{12}*a_{21}=0  \\
+  \lambda^2 +\lambda *(-a_{11}-a_{22})+(a_{11}*a_{22}-a_{12}*a_{21})
+\end{eqnarray}
+Definiendo las variables:
+\begin{eqnarray}
+b = (-a_{11}-a_{22})   \\
+c = a_{11}*a_{22}-a_{12}*a_{21}  \\
+\lambda^2 +\lambda *(b)+(c) = 0 
+\end{eqnarray}
+Del cual 
+$\lambda =\lambda_1 ,\lambda_2 $
+\subsection{Autovectoires}
+sdf
+\section{Aplicacion de las ecuaciones en Python}
+
+dsd
+\section{Resultados}
+\section{CONCLUSIONES Y RECOMENDACIONES}
+
+
+
+\begin{thebibliography}{1}
+\bibitem{LaTeX}
+Control Automatico de Procesos ( Teoria y Practica ),
+\newblock {\em Carlos A. Smith , Versi\'on Espa~nola - Editorial LIMUSA }
+
+\bibitem{LaTeX}
+Instrumentacion Industrial
+\newblock {\em Antonio Creus Sol\'e , Sexta Edici\'on }
+
+\bibitem{LaTeX}
+Electronica de Potencia
+\newblock {\em Daniel W. Hart ,MADRID   2001  }
+
+\bibitem{LaTeX}
+PT100 su operaci\'on instalaci\'on y tablas
+\newblock {\em http://www.arian.cl, Nota Tecnica 4  }
+
+
+\end{thebibliography}
+
+
+\end{document}
